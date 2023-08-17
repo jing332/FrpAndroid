@@ -38,7 +38,7 @@ jobs:
           cd $GITHUB_WORKSPACE/frp
           chmod +x *.sh
           # export CC         
-          declare -A goarch2cc=( ["arm64"]="aarch64-linux-android32-clang" ["arm"]="armv7a-linux-androideabi32-clang" ["amd64"]="x86_64-linux-android32-clang" ["386"]="i686-linux-android32-clang"); export CC="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/${goarch2cc[$GOARCH]}";
+          declare -A goarch2cc=( ["arm64"]="aarch64-linux-android32-clang" ["arm"]="armv7a-linux-androideabi32-clang" ["amd64"]="x86_64-linux-android32-clang" ["386"]="i686-linux-android32-clang"); export CC="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/${goarch2cc[$GOARCH]}"
           declare -A arch2lib=( ["arm64"]="arm64-v8a" ["arm"]="armeabi-v7a" ["amd64"]="x86_64" ["386"]="x86"); export LIB="${goarch2cc[$GOARCH]}"
           ./install_frpc.sh frpc ${{ matrix.GO_ARCH }} ${LIB} 
           ./install_frpc.sh frps ${{ matrix.GO_ARCH }} ${LIB} 
