@@ -13,5 +13,5 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "AlistAndroid"
+rootProject.name = "FrpAndroid"
 include ':app'
