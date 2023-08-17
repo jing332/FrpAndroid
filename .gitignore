@@ -6,20 +6,10 @@
 
 local.properties
 
-/alist-lib/*
-alist-main
-!alist-lib/alistlib
-!alist-lib/scripts
-
 *.aar
 *.exe
 *.tgz
 *.jar
 *.zip
-
-
-# Project exclude paths
-/.github/
-/app/
-/frpc/
-/gradle/
+*.jks
+/frp
