@@ -1,0 +1,54 @@
+name: CheckFrpVersion
+
+on:
+  schedule:
+    - cron: "0 * * * *" # 每小时执行一次
+  workflow_dispatch:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "sync_frp.yaml"  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VERSION_FILE: ${{ github.workspace }}/frp_version
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          cd $GITHUB_WORKSPACE/.github/scripts
+          chmod +x ./*.sh
+
+          touch ${{ env.VERSION_FILE }}
+          ./check_frp.sh
+
+      - name: Shell
+        run: |
+          echo "frp_version=${{ env.frp_version }}"
+          echo "has_update=${{ env.has_update }}" 
+
+          # 用于测试
+          # echo "has_update=1" >> $GITHUB_ENV 
+
+          if [ ${{ env.has_update }} -eq 0 ]
+          then
+            echo "无更新"
+          else
+            echo -e "[同步FRP] ${{ env.frp_version }}" > $GITHUB_WORKSPACE/CHANGELOG.md
+            echo -e "${{ env.frp_version }}" > ${{ env.VERSION_FILE }}
+
+            git config user.name "github-actions"
+            git config user.email "42014615+jing332@users.noreply.github.com"
+            git add .
+            git commit -m "[bot] Update frp to ${{ env.frp_version }}"
+            git push
+          fi
+
+      - name: Run workflow release
+        if: env.has_update == 1 && ( success() || failure() )
+        run: |
+          gh workflow run release.yaml -R jing332/frpandroid
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
