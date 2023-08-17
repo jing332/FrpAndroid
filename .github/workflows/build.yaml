@@ -43,13 +43,13 @@ jobs:
           export CC="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/${goarch2cc[$GOARCH]}"
           
           declare -A arch2lib=( ["arm64"]="arm64-v8a" ["arm"]="armeabi-v7a" ["amd64"]="x86_64" ["386"]="x86")
-          export LIB="${goarch2cc[$GOARCH]}"
+          export LIB="${arch2lib[$GOARCH]}"
           
           ./install_frp.sh frpc $GOARCH $LIB 
           ./install_frp.sh frps $GOARCH $LIB 
 
       - name: Upload to Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "app_libs"
           path: "${{ github.workspace }}/app/libs"
