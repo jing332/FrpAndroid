@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: Download FRP Source Code
+      - name: Download FRP Source Code
         run: |
           cd $GITHUB_WORKSPACE/frp
           chmod +x *.sh
