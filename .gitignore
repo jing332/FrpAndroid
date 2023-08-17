@@ -6,10 +6,8 @@
 
 local.properties
 
-*.aar
 *.exe
 *.tgz
-*.jar
 *.zip
 *.jks
 frp-*
