@@ -49,7 +49,7 @@ jobs:
           name: "app_libs"
           path: "${{ github.workspace }}/app/libs"
 
-  build:
+  android:
     runs-on: ubuntu-latest
     needs: [ go ]
     env:
