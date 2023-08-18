@@ -43,4 +43,6 @@
     <string name="start">启动</string>
     <string name="help_document">帮助文档</string>
     <string name="frp_online_document">FRP在线文档</string>
+    <string name="add_config">添加配置</string>
+    <string name="search_filter">搜索过滤</string>
 </resources>
