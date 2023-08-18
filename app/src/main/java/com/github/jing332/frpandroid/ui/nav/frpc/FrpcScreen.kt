@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -54,7 +53,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FrpScreen() {
+fun FrpcScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mainVM = LocalMainViewModel.current
@@ -73,7 +72,7 @@ fun FrpScreen() {
         context.frpcSwitch()
     }
 
-    Scaffold(modifier = Modifier.imePadding(),
+    Scaffold(
         topBar = {
             var version by remember { mutableStateOf("") }
             LaunchedEffect(Unit) {
@@ -95,7 +94,7 @@ fun FrpScreen() {
                 modifier = Modifier
                     .padding(8.dp),
                 configScreen = {
-
+                    ConfigScreen(Modifier.fillMaxSize())
                 },
                 logScreen = {
                     LogScreen(

@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.github.jing332.frpandroid.ui.nav.frpc.FrpScreen
+import com.github.jing332.frpandroid.ui.nav.frpc.FrpcScreen
 import com.github.jing332.frpandroid.ui.nav.frps.FrpsScreen
 import com.github.jing332.frpandroid.ui.nav.settings.SettingsScreen
 
@@ -17,7 +17,7 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier) {
         }
 
         composable(BottomNavRoute.Frpc.id) {
-            FrpScreen()
+            FrpcScreen()
         }
 
         composable(BottomNavRoute.Settings.id) {
