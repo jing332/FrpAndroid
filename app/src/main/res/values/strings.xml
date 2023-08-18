@@ -41,4 +41,6 @@
     <string name="frp_error">⚠️ FRP错误，请查看日志</string>
     <string name="config">配置</string>
     <string name="start">启动</string>
+    <string name="help_document">帮助文档</string>
+    <string name="frp_online_document">FRP在线文档</string>
 </resources>
