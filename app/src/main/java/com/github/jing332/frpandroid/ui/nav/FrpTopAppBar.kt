@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.github.jing332.frpandroid.R
 import com.github.jing332.frpandroid.ui.LocalMainViewModel
-import com.github.jing332.frpandroid.ui.nav.frpc.AboutDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.coroutineContext
+import kotlin.system.measureTimeMillis
 
 abstract class FrpService(
     val type: FrpLog.Type,
@@ -146,9 +147,11 @@ abstract class FrpService(
             if (intent?.action == shutdownAction) {
                 shutdown()
             } else {
-                val ret = startup()
-                if (ret == Frp.RET_OK) {
-                } else {
+                var ret = 0
+                val cost = measureTimeMillis {
+                    ret = startup()
+                }
+                if (cost <= 1000 || ret != Frp.RET_OK) {
                     longToast(R.string.frp_error)
                 }
             }
