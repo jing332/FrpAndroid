@@ -21,17 +21,19 @@ object IniConfigParser {
 
     fun load(str: String): HashMap<String, HashMap<String, String>> {
         val map = HashMap<String, HashMap<String, String>>()
+        var currentSection = ""
         for (line in str.lines()) {
             if (line.startsWith("#")) continue
 
             val section = matchSection(line)
             if (section.isNotEmpty()) {
+                currentSection = section
                 map[section] = HashMap()
             }
 
             val kv = matchKeyValue(line)
             if (kv.first.isNotEmpty() && kv.second.isNotEmpty()) {
-                map[section]?.set(kv.first, kv.second)
+                map[currentSection]?.set(kv.first, kv.second)
             }
 
         }
