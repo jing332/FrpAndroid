@@ -27,13 +27,13 @@ object IniConfigParser {
 
             val section = matchSection(line)
             if (section.isNotEmpty()) {
-                currentSection = section
+                currentSection = section.trim()
                 map[section] = HashMap()
             }
 
             val kv = matchKeyValue(line)
             if (kv.first.isNotEmpty() && kv.second.isNotEmpty()) {
-                map[currentSection]?.set(kv.first, kv.second)
+                map[currentSection]?.set(kv.first.trim(), kv.second.trim())
             }
 
         }
