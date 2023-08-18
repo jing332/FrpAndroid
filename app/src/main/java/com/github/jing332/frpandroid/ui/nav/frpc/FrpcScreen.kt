@@ -1,15 +1,28 @@
 package com.github.jing332.frpandroid.ui.nav.frpc
 
+import android.annotation.SuppressLint
 import android.content.IntentFilter
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +32,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -31,12 +46,13 @@ import com.github.jing332.frpandroid.model.frp.Frpc
 import com.github.jing332.frpandroid.service.FrpServiceManager.frpcSwitch
 import com.github.jing332.frpandroid.service.FrpcService
 import com.github.jing332.frpandroid.ui.LocalMainViewModel
+import com.github.jing332.frpandroid.ui.nav.BasicFrpScreen
 import com.github.jing332.frpandroid.ui.nav.FrpTopAppBar
 import com.github.jing332.frpandroid.ui.widgets.LocalBroadcastReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FrpScreen() {
     val context = LocalContext.current
@@ -70,32 +86,74 @@ fun FrpScreen() {
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             Modifier
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)
-                .padding(bottom = 16.dp)
         ) {
-            ServerLogScreen(
+            BasicFrpScreen(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                appDb.frpLogDao.flowAll(FrpLog.Type.FRPC)
+                    .padding(8.dp),
+                configScreen = {
+
+                },
+                logScreen = {
+                    LogScreen(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        appDb.frpLogDao.flowAll(FrpLog.Type.FRPC),
+                        paddingBottom = 48.dp
+                    )
+                }
             )
 
-            Column(
-                Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Bottom,
+            SwitchFloatingButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                switch = running
             ) {
-                Switch(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally),
-                    checked = running,
-                    onCheckedChange = { switch() },
-                )
+                switch()
             }
         }
+
+    }
+}
+
+@Composable
+fun SwitchFloatingButton(modifier: Modifier, switch: Boolean, onSwitchChange: (Boolean) -> Unit) {
+    val scope = rememberCoroutineScope()
+
+    val targetIcon =
+        if (switch) Icons.Filled.Stop else Icons.Filled.Send
+    val rotationAngle by animateFloatAsState(targetValue = if (switch) 360f else 0f, label = "")
+
+    val color =
+        animateColorAsState(
+            targetValue = if (switch) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.primaryContainer,
+            label = "",
+            animationSpec = tween(500, 0, LinearEasing)
+        )
+
+    FloatingActionButton(
+        modifier = modifier,
+        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+        shape = CircleShape,
+        containerColor = color.value,
+        onClick = { onSwitchChange(!switch) }) {
+
+        Crossfade(targetState = targetIcon, label = "") {
+            Icon(
+                imageVector = it,
+                contentDescription = stringResource(id = if (switch) R.string.shutdown else R.string.start),
+                modifier = Modifier
+                    .rotate(rotationAngle)
+                    .graphicsLayer {
+                        rotationZ = rotationAngle
+                    }
+                    .size(if (switch) 42.dp else 32.dp)
+            )
+        }
+
     }
 }

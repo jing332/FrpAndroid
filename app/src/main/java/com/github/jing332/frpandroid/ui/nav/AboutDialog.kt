@@ -1,4 +1,4 @@
-package com.github.jing332.frpandroid.ui.nav.frpc
+package com.github.jing332.frpandroid.ui.nav
 
 import android.content.Intent
 import androidx.compose.foundation.Image
