@@ -25,19 +25,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.jing332.frpandroid.R
+import com.github.jing332.frpandroid.model.frp.Frpc
 import com.github.jing332.frpandroid.ui.widgets.DenseOutlinedField
 import com.github.jing332.frpandroid.util.ToastUtils.longToast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
-fun ConfigScreen(modifier: Modifier, vm: ConfigViewModel = viewModel()) {
+fun ConfigScreen(
+    modifier: Modifier,
+    key: String,
+
+    vm: ConfigViewModel = viewModel(key = key + "_config"),
+    listVM: ConfigListViewModel = viewModel(key = key + "_configList"),
+) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     LaunchedEffect(vm.hashCode()) {
 //        scope.launch(Dispatchers.IO) {
 //            vm.init(context)
 //        }
+    }
+
+    var showConfigEditDialog by remember { mutableStateOf<ConfigListViewModel.Item?>(null) }
+    if (showConfigEditDialog != null) {
+        val item = showConfigEditDialog!!
+        ConfigEditDialog(
+            section = item.section,
+            key = item.key,
+            value = item.value,
+
+            onDismissRequest = {
+                showConfigEditDialog = null
+            }, onSave = {
+                showConfigEditDialog = null
+                listVM.saveConfig(item.section, item.key, it)
+            }
+        )
     }
 
     var showSelectionDialog by remember { mutableStateOf(false) }
@@ -49,13 +71,13 @@ fun ConfigScreen(modifier: Modifier, vm: ConfigViewModel = viewModel()) {
         }
 
     Column(modifier) {
-        var searchKey by remember { mutableStateOf("") }
+        var filterKey by remember { mutableStateOf("") }
         Box(Modifier.fillMaxWidth()) {
             Row(Modifier.align(Alignment.Center)) {
                 DenseOutlinedField(
-                    value = searchKey,
+                    value = filterKey,
                     onValueChange = {
-                        searchKey = it
+                        filterKey = it
 //                        vm.filter(searchKey)
                     },
                     modifier = Modifier
@@ -74,9 +96,15 @@ fun ConfigScreen(modifier: Modifier, vm: ConfigViewModel = viewModel()) {
             }
         }
 
-        ConfigListScreen(Modifier.fillMaxSize(), searchKey, onClickItem = {
-
-        })
+        ConfigListScreen(
+            Modifier.fillMaxSize(),
+            filterKey = filterKey,
+            iniFilePath = Frpc(context).getConfigFilePath(),
+            onClickItem = {
+                showConfigEditDialog = it
+            },
+            vm = listVM,
+        )
     }
 }
 

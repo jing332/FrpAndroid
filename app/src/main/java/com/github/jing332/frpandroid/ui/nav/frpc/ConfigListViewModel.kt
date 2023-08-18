@@ -6,20 +6,50 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.jing332.frpandroid.model.frp.DocumentTableManager
-import com.github.jing332.frpandroid.model.frp.IniConfigParser
+import com.github.jing332.frpandroid.model.frp.config.IniConfig
+import com.github.jing332.frpandroid.model.frp.config.IniConfigManager
+import com.github.jing332.frpandroid.model.frp.config.IniConfigParser
 import com.github.jing332.frpandroid.util.FileUtils.readAllText
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 class ConfigListViewModel : ViewModel() {
     private val groupedItems = mutableStateListOf<Pair<Group, List<Item>>>()
     val filteredItems = mutableStateListOf<Pair<Group, SnapshotStateList<Item>>>()
+    val cfgManager = IniConfigManager()
 
-    fun init(context: Context) {
-        groupedItems.clear()
+    private fun loadDocument(context: Context) {
+        viewModelScope.launch {
+            DocumentTableManager.load(context)
+        }
+    }
+
+    fun initFromIniString(context: Context, iniStr: String) {
+        loadDocument(context)
 
         val fullIni = context.assets.open("defaultData/frpc_full.ini").readAllText()
         val map = IniConfigParser.load(fullIni)
-        map.toGrouped().forEach { entry ->
+        map.setToModels()
+    }
+
+    fun initFromFile(context: Context, iniFilePath: String) {
+        loadDocument(context)
+
+        cfgManager.iniFilePath = iniFilePath
+        viewModelScope.launch {
+            cfgManager.flowConfig().conflate().collect {
+                it.setToModels()
+            }
+        }
+    }
+
+    fun saveConfig(section: String, key: String, value: String) {
+        cfgManager.edit(section, key, value)
+    }
+
+    private fun IniConfig.setToModels() {
+        groupedItems.clear()
+        toGrouped().forEach { entry ->
             val list = mutableStateListOf<Item>()
             groupedItems.add(Pair(entry.key, list))
             entry.value.forEach {
@@ -27,18 +57,14 @@ class ConfigListViewModel : ViewModel() {
             }
         }
 
-        filter("")
-
-        viewModelScope.launch {
-            DocumentTableManager.load(context)
-        }
+        filter()
     }
 
     suspend fun findDocumentToMarkdown(name: String): String {
         return DocumentTableManager.findDocumentToMarkdown(name)
     }
 
-    private fun HashMap<String, HashMap<String, String>>.toGrouped(): HashMap<Group, List<Item>> {
+    private fun IniConfig.toGrouped(): HashMap<Group, List<Item>> {
         val map = hashMapOf<Group, List<Item>>()
         this.forEach { sections ->
             val section = sections.key
@@ -55,7 +81,7 @@ class ConfigListViewModel : ViewModel() {
         return map
     }
 
-    fun filter(searchKey: String) {
+    fun filter(searchKey: String = "") {
         filteredItems.clear()
 
         fun filter(onFilter: (Item) -> Boolean) {

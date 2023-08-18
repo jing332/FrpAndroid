@@ -17,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.jing332.frpandroid.R
 import com.github.jing332.frpandroid.ui.widgets.DenseOutlinedField
+import com.github.jing332.frpandroid.util.FileUtils.readAllText
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +31,11 @@ fun ConfigSelectionDialog(
     onDismissRequest: () -> Unit,
     onClick: (ConfigListViewModel.Item) -> Unit
 ) {
+    val context = LocalContext.current
+    val iniString = remember {
+        context.assets.open("defaultData/frpc_full.ini").readAllText()
+    }
+
     ModalBottomSheet(onDismissRequest = onDismissRequest) {
         Column(
             Modifier
@@ -46,6 +53,7 @@ fun ConfigSelectionDialog(
             Spacer(modifier = Modifier.height(8.dp))
             ConfigListScreen(
                 modifier = Modifier.fillMaxSize(),
+                iniString = iniString,
                 filterKey = searchKey,
                 onClickItem = onClick
             )

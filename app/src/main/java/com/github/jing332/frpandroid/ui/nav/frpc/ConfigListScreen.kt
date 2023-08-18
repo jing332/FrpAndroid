@@ -51,6 +51,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConfigListScreen(
     modifier: Modifier,
+    iniString: String = "",
+    iniFilePath: String = "",
+
     filterKey: String,
     onClickItem: (ConfigListViewModel.Item) -> Unit,
 
@@ -63,9 +66,13 @@ fun ConfigListScreen(
         vm.filter(filterKey)
     }
 
-    LaunchedEffect(vm) {
+    LaunchedEffect(vm.hashCode()) {
+        println("list LaunchedEffect")
         scope.launch {
-            vm.init(context)
+            if (iniString.isEmpty()) {
+                vm.initFromFile(context, iniFilePath)
+            } else
+                vm.initFromIniString(context, iniString)
         }
     }
 
@@ -134,7 +141,6 @@ fun ConfigListScreen(
                     item.section,
                     item.key,
                     item.value,
-                    onEdit = { /*vm.editConfig(item)*/ },
                     onClick = {
                         onClickItem(item)
                     },
@@ -161,21 +167,19 @@ fun IniConfigItem(
     value: String,
     onDocument: () -> Unit,
     onClick: () -> Unit,
-    onEdit: () -> Unit,
 ) {
-    Row {
-        Column(
-            Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple()
-                ) {
-                    onClick()
-                }
-                .fillMaxWidth()
-                .padding(4.dp)
-                .weight(1f)
-        ) {
+    Row(
+        Modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple()
+            ) {
+                onClick()
+            }
+            .fillMaxWidth()
+            .padding(4.dp)
+    ) {
+        Column(Modifier.weight(1f)) {
             Text(key, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text(value, style = MaterialTheme.typography.bodyMedium)
         }

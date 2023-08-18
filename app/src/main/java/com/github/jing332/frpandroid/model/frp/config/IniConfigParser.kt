@@ -1,10 +1,13 @@
-package com.github.jing332.frpandroid.model.frp
+package com.github.jing332.frpandroid.model.frp.config
+
+typealias IniKV = LinkedHashMap<String, String>
+typealias IniConfig = LinkedHashMap<String, IniKV>
 
 object IniConfigParser {
     private fun matchSection(line: String): String {
         val sectionMatch = Regex("\\[(.*)\\]").find(line)
         if (sectionMatch != null) {
-            return sectionMatch.groupValues[1]
+            return sectionMatch.groupValues[1].trim()
         }
         return ""
     }
@@ -14,31 +17,35 @@ object IniConfigParser {
         if (keyValueMatch != null) {
             val key = keyValueMatch.groupValues[1]
             val value = keyValueMatch.groupValues[2]
-            return Pair(key, value)
+            return Pair(key.trim(), value.trim())
         }
         return Pair("", "")
     }
 
-    fun load(str: String): HashMap<String, HashMap<String, String>> {
-        val map = HashMap<String, HashMap<String, String>>()
+    fun loadFromString(str: String): IniConfig {
+        val map = IniConfig()
         var currentSection = ""
         for (line in str.lines()) {
             if (line.startsWith("#")) continue
 
             val section = matchSection(line)
             if (section.isNotEmpty()) {
-                currentSection = section.trim()
-                map[section] = HashMap()
+                currentSection = section
+                map[section] = IniKV()
             }
 
             val kv = matchKeyValue(line)
             if (kv.first.isNotEmpty() && kv.second.isNotEmpty()) {
-                map[currentSection]?.set(kv.first.trim(), kv.second.trim())
+                map[currentSection]?.set(kv.first, kv.second)
             }
 
         }
 
         return map
+    }
+
+    fun load(str: String): LinkedHashMap<String, LinkedHashMap<String, String>> {
+        return loadFromString(str)
     }
 
     fun edit(str: String, section: String, key: String, value: String): String {
@@ -54,8 +61,8 @@ object IniConfigParser {
 
             val s = matchSection(line)
             if (s.isNotEmpty()) {
-                if (!isEdited && currentSection == section) {
-                    sb.appendLine("$key=$value")
+                if (currentSection.isNotEmpty() && !isEdited && currentSection != section) {
+                    sb.appendLine("$key = $value")
                 }
                 currentSection = s
                 sb.appendLine(line)
@@ -66,7 +73,7 @@ object IniConfigParser {
             if (kv.first.isNotEmpty() && kv.second.isNotEmpty()) {
                 if (currentSection == section && kv.first == key) {
                     isEdited = true
-                    sb.appendLine("$key=$value")
+                    sb.appendLine("$key = $value")
                     continue
                 }
             }
