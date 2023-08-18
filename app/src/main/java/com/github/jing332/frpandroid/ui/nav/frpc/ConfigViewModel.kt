@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.jing332.frpandroid.model.frp.DocTableParser
+import com.github.jing332.frpandroid.model.frp.DocumentTableManager
 import com.github.jing332.frpandroid.model.frp.IniConfigParser
 import com.github.jing332.frpandroid.util.FileUtils.readAllText
 import kotlinx.coroutines.delay
@@ -14,9 +14,6 @@ import kotlinx.coroutines.launch
 class ConfigViewModel : ViewModel() {
     //    val configList = mutableStateListOf<Item>()
     val groupedItems = mutableStateMapOf<Group, SnapshotStateList<Item>>()
-
-    var serverTables = listOf<DocTableParser.Table>()
-    var clientTables = listOf<DocTableParser.Table>()
 
     fun init(context: Context) {
         groupedItems.clear()
@@ -31,63 +28,12 @@ class ConfigViewModel : ViewModel() {
         }
 
         viewModelScope.launch {
-            serverTables = DocTableParser.parseTables(
-                context.assets.open("docs/zh/server-configures.md").readAllText()
-            )
-        }
-
-        viewModelScope.launch {
-            clientTables = DocTableParser.parseTables(
-                context.assets.open("docs/zh/client-configures.md").readAllText()
-            )
+            DocumentTableManager.load(context)
         }
     }
 
-
     suspend fun findDocumentToMarkdown(name: String): String {
-        while (clientTables.isEmpty() || serverTables.isEmpty()) {
-            delay(500)
-        }
-
-        val sb = StringBuilder()
-        fun addParameter(parameter: DocTableParser.Parameter) {
-            sb.appendLine("参数： `${parameter.name}`")
-            sb.appendLine()
-            sb.appendLine("类型：`" + parameter.type + "`")
-            sb.appendLine()
-            sb.appendLine("默认：`" + parameter.defaultValue + "`")
-            sb.appendLine()
-            sb.appendLine("可选：`${parameter.optionalValues}`".replace("``", ""))
-            sb.appendLine()
-            sb.appendLine(parameter.description)
-            sb.appendLine()
-            sb.appendLine("> " + parameter.remark)
-            sb.appendLine()
-            sb.appendLine()
-        }
-
-        fun addTables(list: List<DocTableParser.Table>, type: String) {
-            val ret = mutableListOf<DocTableParser.Parameter>()
-            list.forEach { table ->
-                table.parameters.forEach { parameter ->
-                    if (parameter.name == name) {
-                        ret.add(parameter)
-                    }
-                }
-            }
-            if (ret.isNotEmpty()) {
-                sb.appendLine("## $type")
-                sb.appendLine()
-                for (v in ret) {
-                    addParameter(v)
-                }
-            }
-        }
-
-        addTables(clientTables, "FRPC")
-        addTables(serverTables, "FRPS")
-
-        return sb.toString()
+        return DocumentTableManager.findDocumentToMarkdown(name)
     }
 
     private fun HashMap<String, HashMap<String, String>>.toGrouped(): HashMap<Group, List<Item>> {

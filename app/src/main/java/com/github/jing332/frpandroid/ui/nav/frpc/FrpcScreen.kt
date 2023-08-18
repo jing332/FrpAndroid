@@ -80,7 +80,7 @@ fun FrpcScreen() {
                     version = withIO { Frpc(context).version() }
                 }
             }
-            FrpTopAppBar(type = stringResource(id = R.string.frpc), version = version) {
+            FrpTopAppBar(type = stringResource(id = R.string.frpc), "Client", version = version) {
 
             }
         }

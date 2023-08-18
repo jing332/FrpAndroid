@@ -40,10 +40,10 @@ class FrpsService() :
         super.onCreate()
 
         createNotification(
-            title = "Frpc",
+            title = "Frps",
             contentText = "FrpAndroid",
-            icon = R.drawable.ic_app_launcher_foreground,
-            chanelId = "frpc",
+            icon = R.drawable.ic_notification_frps,
+            chanelId = "frps",
             contentAction = PendingIntent.getActivity(
                 this,
                 0,
