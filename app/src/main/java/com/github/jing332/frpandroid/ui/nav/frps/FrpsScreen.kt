@@ -15,6 +15,7 @@ fun FrpsScreen() {
         topBar = {
             FrpTopAppBar(
                 type = stringResource(id = R.string.frps),
+                subTitle = "Server",
                 version = Frps(context).version()
             ) {
             }
