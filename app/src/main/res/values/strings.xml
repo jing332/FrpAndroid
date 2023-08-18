@@ -45,4 +45,6 @@
     <string name="frp_online_document">FRP在线文档</string>
     <string name="add_config">添加配置</string>
     <string name="search_filter">搜索过滤</string>
+    <string name="save">保存</string>
+    <string name="edit_config">编辑配置</string>
 </resources>

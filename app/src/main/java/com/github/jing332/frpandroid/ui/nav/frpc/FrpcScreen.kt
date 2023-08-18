@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -94,7 +93,7 @@ fun FrpcScreen() {
                 modifier = Modifier
                     .padding(8.dp),
                 configScreen = {
-                    ConfigScreen(Modifier.fillMaxSize())
+                    ConfigScreen(Modifier.fillMaxSize(), key = "frpc")
                 },
                 logScreen = {
                     LogScreen(
