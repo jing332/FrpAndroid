@@ -3,7 +3,6 @@ package com.github.jing332.frpandroid.ui
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,14 +19,30 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.jing332.frpandroid.R
-import dev.jeziellago.compose.markdowntext.MarkdownText
+import com.github.jing332.frpandroid.ui.widgets.AppDialog
+import com.github.jing332.frpandroid.ui.widgets.Markdown
+import com.github.jing332.frpandroid.util.ClipboardUtils
+
+@Preview
+@Composable
+private fun PreviewAppUpdateDialog() {
+    var show by remember { androidx.compose.runtime.mutableStateOf(true) }
+    if (show)
+        AppUpdateDialog(
+            onDismissRequest = {
+                show = false
+            }, version = "1.0.0", content = "## 更新内容\n\n- 123", downloadUrl = "url"
+        )
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,28 +54,25 @@ fun AppUpdateDialog(
 ) {
     val context = LocalContext.current
     fun openDownloadUrl(url: String) {
+        ClipboardUtils.copyText("FrpAndroid下载链接", url)
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
-    AlertDialog(onDismissRequest = onDismissRequest) {
-        Surface(
-            tonalElevation = 8.dp,
-            color = MaterialTheme.colorScheme.surface,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.wrapContentHeight()
-        ) {
+    AppDialog(onDismissRequest = onDismissRequest,
+        title = {
+            Text(
+                "新版本",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        },
+        content = {
             Column {
-                Text(
-                    "检查到新版本",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
                 Text(
                     text = version,
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
-                HorizontalDivider(Modifier.padding(vertical = 8.dp))
+
                 val scrollState = rememberScrollState()
                 Column(
                     Modifier
@@ -68,34 +80,26 @@ fun AppUpdateDialog(
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    MarkdownText(
-                        markdown = content, modifier = Modifier
+                    Markdown(
+                        content = content,
+                        modifier = Modifier
                             .padding(4.dp),
-                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    Box(Modifier.align(Alignment.CenterHorizontally)) {
-                        Row {
-                            TextButton(onClick = { /*TODO*/ }) {
-                                Text(stringResource(id = R.string.copy_address))
-                            }
-                            TextButton(onClick = { openDownloadUrl(downloadUrl) }) {
-                                Text("下载(Github)")
-                            }
-                            TextButton(onClick = { openDownloadUrl("https://ghproxy.com/${downloadUrl}") }) {
-                                Text("下载(ghproxy加速)")
-                            }
-                        }
-                    }
-
-                    LaunchedEffect(Unit) {
-                        scrollState.animateScrollTo(scrollState.maxValue)
-                    }
                 }
-
+            }
+        },
+        buttons = {
+            Row {
+                TextButton(onClick = { openDownloadUrl(downloadUrl) }) {
+                    Text("下载(Github)")
+                }
+                TextButton(onClick = { openDownloadUrl("https://ghproxy.com/${downloadUrl}") }) {
+                    Text("下载(ghproxy加速)")
+                }
             }
         }
-    }
+    )
 }
