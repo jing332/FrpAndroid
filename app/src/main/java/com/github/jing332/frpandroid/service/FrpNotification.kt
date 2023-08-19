@@ -11,6 +11,14 @@ import com.github.jing332.frpandroid.ui.theme.androidColor
 
 @Suppress("DEPRECATION")
 object FrpNotification {
+    fun contentPaddingFlag(): Int {
+        // Android 12(S)+ 必须指定PendingIntent.FLAG_
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            PendingIntent.FLAG_IMMUTABLE
+        else
+            0
+    }
+
     fun Context.createNotification(
         title: String,
         contentText: String,
@@ -20,11 +28,6 @@ object FrpNotification {
         contentAction: PendingIntent,
         shutdownAction: PendingIntent,
     ): Notification {
-        // Android 12(S)+ 必须指定PendingIntent.FLAG_
-        val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            PendingIntent.FLAG_IMMUTABLE
-        else
-            0
 
         val color = com.github.jing332.frpandroid.ui.theme.seed.androidColor
         val smallIconRes: Int = icon

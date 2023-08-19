@@ -61,7 +61,7 @@ object IniConfigParser {
 
             val s = matchSection(line)
             if (s.isNotEmpty()) {
-                if (currentSection.isNotEmpty() && !isEdited && currentSection != section) {
+                if (currentSection.isNotEmpty() && !isEdited && currentSection != s) {
                     sb.appendLine("$key = $value")
                 }
                 currentSection = s

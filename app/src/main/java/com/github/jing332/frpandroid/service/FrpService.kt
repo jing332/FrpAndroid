@@ -9,6 +9,8 @@ import android.os.IBinder
 import android.util.Log
 import com.github.jing332.frpandroid.R
 import com.github.jing332.frpandroid.constant.AppConst
+import com.github.jing332.frpandroid.constant.FrpType
+import com.github.jing332.frpandroid.constant.LogLevel
 import com.github.jing332.frpandroid.data.appDb
 import com.github.jing332.frpandroid.data.entities.FrpLog
 import com.github.jing332.frpandroid.model.frp.Frp
@@ -26,9 +28,9 @@ import kotlin.coroutines.coroutineContext
 import kotlin.system.measureTimeMillis
 
 abstract class FrpService(
-    val type: FrpLog.Type,
+    val type: FrpType,
     val shutdownAction: String,
-    val onStatusChangedAction: String
+    private val onStatusChangedAction: String
 ) :
     Service() {
     companion object {
@@ -75,28 +77,47 @@ abstract class FrpService(
     private fun initOutput() {
         val dao = appDb.frpLogDao
         coroutineScope.launch {
-            logWatcher { msg ->
-                val log = msg.removeAnsiCodes().evalLog() ?: return@logWatcher
-                dao.insert(
-                    FrpLog(
-                        type = type,
-                        level = log.level,
-                        message = log.msg
+            runCatching {
+                logWatcher { msg ->
+                    msg.removeAnsiCodes().evalLog()?.let {
+                        dao.insert(
+                            FrpLog(
+                                type = type,
+                                level = it.level,
+                                message = it.msg
+                            )
+                        )
+                        return@logWatcher
+                    }
+
+                    dao.insert(
+                        FrpLog(
+                            type = type,
+                            level = if (msg.startsWith("fail")) LogLevel.ERROR else LogLevel.INFO,
+                            message = msg
+                        )
                     )
-                )
+
+                }
+            }.onFailure {
+                it.printStackTrace()
             }
         }
         coroutineScope.launch {
-            errorLogWatcher { msg ->
-                val log = msg.removeAnsiCodes().evalLog() ?: return@errorLogWatcher
-                dao.insert(
-                    FrpLog(
-                        type = type,
-                        level = log.level,
-                        message = log.msg,
-                        description = log.time + "\n" + log.code
+            runCatching {
+                errorLogWatcher { msg ->
+                    val log = msg.removeAnsiCodes().evalLog() ?: return@errorLogWatcher
+                    dao.insert(
+                        FrpLog(
+                            type = type,
+                            level = log.level,
+                            message = log.msg,
+                            description = log.time + "\n" + log.code
+                        )
                     )
-                )
+                }
+            }.onFailure {
+                it.printStackTrace()
             }
         }
     }
@@ -147,12 +168,12 @@ abstract class FrpService(
             if (intent?.action == shutdownAction) {
                 shutdown()
             } else {
-                var ret = 0
+                var ret: Int
                 val cost = measureTimeMillis {
                     ret = startup()
                 }
-                if (cost <= 1000 || ret != Frp.RET_OK) {
-                    longToast(R.string.frp_error)
+                if (cost <= 1000 || ret != Frp.RET_OK && ret != 143) {
+                    longToast(R.string.frp_error, ret)
                 }
             }
         }

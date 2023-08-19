@@ -18,9 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.github.jing332.frpandroid.R
 import com.github.jing332.frpandroid.ui.LocalMainViewModel
@@ -43,10 +41,7 @@ fun FrpTopAppBar(type: String, subTitle: String, version: String, onAddShortcut:
     TopAppBar(
         title = {
             Column {
-                Row {
-                    Text("$type - v")
-                    Text(version)
-                }
+                Text("$type - v${version}", maxLines = 1)
                 Text(subTitle, style = MaterialTheme.typography.bodyMedium)
             }
         },

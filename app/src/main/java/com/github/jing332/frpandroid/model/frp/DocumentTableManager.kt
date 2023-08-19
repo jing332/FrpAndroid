@@ -37,7 +37,7 @@ object DocumentTableManager {
         fun kv(key: String, value: String) = "${key}：`${value}`".replace("``", "无")
 
         val sb = StringBuilder()
-        fun addParameter(parameter: DocumentTableManager.Parameter) {
+        fun addParameter(parameter: Parameter) {
             sb.appendLine("参数： `${parameter.name}`")
             sb.appendLine()
             sb.appendLine("类型：`" + parameter.type + "`")
@@ -53,8 +53,8 @@ object DocumentTableManager {
             sb.appendLine()
         }
 
-        fun addTables(list: List<DocumentTableManager.Table>, type: String) {
-            val ret = mutableListOf<DocumentTableManager.Parameter>()
+        fun addTables(list: List<Table>, type: String) {
+            val ret = mutableListOf<Parameter>()
             list.forEach { table ->
                 table.parameters.forEach { parameter ->
                     if (parameter.name == name) {
@@ -65,7 +65,7 @@ object DocumentTableManager {
             if (ret.isNotEmpty()) {
                 sb.appendLine("## $type")
                 sb.appendLine()
-                for (v in ret) {
+                for (v in ret.distinctBy { it.name }) {
                     addParameter(v)
                 }
             }

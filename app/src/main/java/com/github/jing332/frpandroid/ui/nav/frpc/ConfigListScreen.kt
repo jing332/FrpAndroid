@@ -66,7 +66,6 @@ fun ConfigListScreen(
     }
 
     LaunchedEffect(vm.hashCode()) {
-        println("list LaunchedEffect")
         scope.launch {
             if (iniString.isEmpty()) {
                 vm.initFromFile(context, iniFilePath)

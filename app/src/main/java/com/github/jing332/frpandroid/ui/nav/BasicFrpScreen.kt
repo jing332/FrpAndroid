@@ -18,6 +18,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,12 +35,23 @@ import kotlinx.coroutines.launch
 fun BasicFrpScreen(
     modifier: Modifier,
     configScreen: @Composable () -> Unit,
-    logScreen: @Composable () -> Unit
+    logScreen: @Composable () -> Unit,
+    pageIndex: Int,
+    onPageIndexChanged: (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
+
     Column(modifier) {
         val tabs = remember { listOf(R.string.config, R.string.log) }
-        val pagerState = rememberPagerState { tabs.size }
+        val pagerState = rememberPagerState(pageIndex) { tabs.size }
+
+        LaunchedEffect(pageIndex) {
+            pagerState.scrollToPage(pageIndex)
+        }
+
+        LaunchedEffect(pagerState.currentPage) {
+            onPageIndexChanged(pagerState.currentPage)
+        }
 
         ElevatedCard {
             TabRow(

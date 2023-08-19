@@ -7,6 +7,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,8 +39,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drake.net.utils.withIO
 import com.github.jing332.frpandroid.R
+import com.github.jing332.frpandroid.config.AppConfig
+import com.github.jing332.frpandroid.constant.FrpType
 import com.github.jing332.frpandroid.data.appDb
-import com.github.jing332.frpandroid.data.entities.FrpLog
 import com.github.jing332.frpandroid.model.frp.Frpc
 import com.github.jing332.frpandroid.service.FrpServiceManager.frpcSwitch
 import com.github.jing332.frpandroid.service.FrpcService
@@ -50,6 +52,7 @@ import com.github.jing332.frpandroid.ui.widgets.LocalBroadcastReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FrpcScreen() {
@@ -65,6 +68,10 @@ fun FrpcScreen() {
         if (it?.action == FrpcService.ACTION_STATUS_CHANGED) {
             running = FrpcService.frpcRunning
         }
+    }
+
+    LaunchedEffect(Unit) {
+        AppConfig.frpPageType.setValueWithoutSave(FrpType.FRPC)
     }
 
     fun switch() {
@@ -84,6 +91,7 @@ fun FrpcScreen() {
             }
         }
     ) { paddingValues ->
+        var currentPageIndex by remember { AppConfig.subPageIndex }
         Box(
             Modifier
                 .padding(top = paddingValues.calculateTopPadding())
@@ -93,16 +101,20 @@ fun FrpcScreen() {
                 modifier = Modifier
                     .padding(8.dp),
                 configScreen = {
-                    ConfigScreen(Modifier.fillMaxSize(), key = "frpc")
+                    ConfigScreen(Modifier.fillMaxSize(), key = "frpc", onIniFilePath = {
+                        Frpc(context).getConfigFilePath()
+                    })
                 },
                 logScreen = {
                     LogScreen(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        appDb.frpLogDao.flowAll(FrpLog.Type.FRPC),
+                        appDb.frpLogDao.flowAll(FrpType.FRPC),
                         paddingBottom = 48.dp
                     )
-                }
+                },
+                pageIndex = currentPageIndex,
+                onPageIndexChanged = { currentPageIndex = it }
             )
 
             SwitchFloatingButton(
