@@ -6,7 +6,7 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.github.jing332.frpandroid.R
-import com.github.jing332.frpandroid.ui.SwitchServerActivity
+import com.github.jing332.frpandroid.ui.SwitchFrpActivity
 
 
 object ShortCuts {
@@ -17,12 +17,22 @@ object ShortCuts {
     }
 
 
-    private fun buildAlistSwitchShortCutInfo(context: Context): ShortcutInfoCompat {
-        val msSwitchIntent = buildIntent<SwitchServerActivity>(context)
-        return ShortcutInfoCompat.Builder(context, "alist_switch")
-            .setShortLabel(context.getString(R.string.alist_switch))
-            .setLongLabel(context.getString(R.string.alist_switch))
-            .setIcon(IconCompat.createWithResource(context, R.drawable.baseline_trending_up_24))
+    private fun buildFrpcSwitchShortCutInfo(context: Context): ShortcutInfoCompat {
+        val msSwitchIntent = buildIntent<SwitchFrpActivity>(context).apply { action = "frpc" }
+        return ShortcutInfoCompat.Builder(context, "frpc_switch")
+            .setShortLabel(context.getString(R.string.frpc_switch))
+            .setLongLabel(context.getString(R.string.frpc_switch))
+            .setIcon(IconCompat.createWithResource(context, R.drawable.ic_frpc))
+            .setIntent(msSwitchIntent)
+            .build()
+    }
+
+    private fun buildFrpsSwitchShortCutInfo(context: Context): ShortcutInfoCompat {
+        val msSwitchIntent = buildIntent<SwitchFrpActivity>(context).apply { action = "frps" }
+        return ShortcutInfoCompat.Builder(context, "frps_switch")
+            .setShortLabel(context.getString(R.string.frps_switch))
+            .setLongLabel(context.getString(R.string.frps_switch))
+            .setIcon(IconCompat.createWithResource(context, R.drawable.ic_frps))
             .setIntent(msSwitchIntent)
             .build()
     }
@@ -31,7 +41,8 @@ object ShortCuts {
     fun buildShortCuts(context: Context) {
         ShortcutManagerCompat.setDynamicShortcuts(
             context, listOf(
-                buildAlistSwitchShortCutInfo(context),
+                buildFrpcSwitchShortCutInfo(context),
+                buildFrpsSwitchShortCutInfo(context)
             )
         )
     }

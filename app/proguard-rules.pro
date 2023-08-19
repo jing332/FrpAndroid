@@ -41,8 +41,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep class cn.hutool.crypto.** { *; }
--keep class cn.hutool.core.** { *; }
+
+# 判断SVG库是否存在 (io.noties.markwon.image.svg.SvgSupport)
+-keepnames class com.caverock.androidsvg.SVG
 
 #-------------- 去掉所有打印 -------------
 

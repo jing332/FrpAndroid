@@ -89,8 +89,10 @@
                 android:value="" />
         </activity>
 
+        <activity android:name=".ui.LibrariesActivity" />
+
         <activity
-            android:name="com.github.jing332.frpandroid.ui.SwitchServerActivity"
+            android:name="com.github.jing332.frpandroid.ui.SwitchFrpActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:taskAffinity="alist.switch"
