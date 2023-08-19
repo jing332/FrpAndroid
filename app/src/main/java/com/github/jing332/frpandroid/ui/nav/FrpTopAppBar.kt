@@ -1,7 +1,6 @@
 package com.github.jing332.frpandroid.ui.nav
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddBusiness
 import androidx.compose.material.icons.filled.MoreVert
@@ -21,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.github.jing332.frpandroid.R
+import com.github.jing332.frpandroid.ui.AboutDialog
 import com.github.jing332.frpandroid.ui.LocalMainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

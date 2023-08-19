@@ -25,7 +25,8 @@
     <string name="password">密码</string>
     <string name="alist_starting">启动中</string>
     <string name="alist_shut_downing">关闭中</string>
-    <string name="alist_switch">开关</string>
+    <string name="frpc_switch">FRPC开关</string>
+    <string name="frps_switch">FRPS开关</string>
     <string name="more_options">更多选项</string>
     <string name="about">关于</string>
     <string name="listen_address">监听地址</string>

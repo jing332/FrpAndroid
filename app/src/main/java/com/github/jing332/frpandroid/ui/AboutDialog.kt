@@ -1,4 +1,4 @@
-package com.github.jing332.frpandroid.ui.nav
+package com.github.jing332.frpandroid.ui
 
 import android.content.Intent
 import androidx.compose.foundation.Image
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,12 +27,14 @@ import androidx.core.net.toUri
 import com.github.jing332.frpandroid.BuildConfig
 import com.github.jing332.frpandroid.R
 import com.github.jing332.frpandroid.model.frp.Frpc
+import com.github.jing332.frpandroid.ui.widgets.AppDialog
 
 @Composable
 fun AboutDialog(onDismissRequest: () -> Unit) {
     val context = LocalContext.current
 
-    AlertDialog(onDismissRequest = onDismissRequest,
+    AppDialog(
+        onDismissRequest = onDismissRequest,
         title = {
             Row {
                 Image(
@@ -49,7 +50,7 @@ fun AboutDialog(onDismissRequest: () -> Unit) {
                 )
             }
         },
-        text = {
+        content = {
             fun openUrl(uri: String) {
                 context.startActivity(
                     Intent(Intent.ACTION_VIEW).apply {
@@ -93,7 +94,18 @@ fun AboutDialog(onDismissRequest: () -> Unit) {
 
             }
         },
-        confirmButton = {
+        buttons = {
+            TextButton(onClick = {
+                onDismissRequest()
+                context.startActivity(
+                    Intent(context, LibrariesActivity::class.java).setAction(
+                        Intent.ACTION_VIEW
+                    )
+                )
+            }) {
+                Text(text = stringResource(id = R.string.open_source_license))
+            }
+
             TextButton(onClick = { onDismissRequest() }) {
                 Text(stringResource(id = R.string.ok))
             }

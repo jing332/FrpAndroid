@@ -91,7 +91,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
+        id: gradle
         run: ./gradlew assembleRelease -build-cache --parallel --daemon --warning-mode all
+
+      - name: Upload missing_rules.txt
+        if: failure() && steps.gradle.outcome != 'success'
+        uses: actions/upload-artifact@v3
+        with:
+          name: "missing_rules"
+          path: "${{ github.workspace }}/app/build/outputs/mapping/release/missing_rules.txt"
 
       - name: Init APP Version Name
         run: |
