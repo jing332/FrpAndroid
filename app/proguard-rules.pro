@@ -331,3 +331,4 @@ public *** print(...);
 -dontwarn org.openjsse.javax.net.ssl.SSLSocket
 -dontwarn org.openjsse.net.ssl.OpenJSSE
 -dontwarn com.github.jing332.frpandroid.StringFog
+-dontwarn pl.droidsonroids.gif.GifDrawable
