@@ -42,39 +42,6 @@ class IniConfigManager {
                         MODIFY -> {
                             Log.i(TAG, "MODIFY")
                             sendConfig()
-
-                        }
-
-                        CLOSE_WRITE -> {
-                            Log.i(TAG, "CLOSE_WRITE")
-                        }
-
-                        CLOSE_NOWRITE -> {
-                            Log.i(TAG, "CLOSE_NOWRITE")
-                        }
-
-                        MOVE_SELF -> {
-                            Log.i(TAG, "MOVE_SELF")
-                        }
-
-                        MOVED_FROM -> {
-                            Log.i(TAG, "MOVED_FROM")
-                        }
-
-                        OPEN -> {
-                            Log.i(TAG, "OPEN")
-                        }
-
-                        ATTRIB -> {
-                            Log.i(TAG, "ATTRIB")
-                        }
-
-                        ACCESS -> {
-                            Log.i(TAG, "ACCESS")
-                        }
-
-                        else -> {
-                            Log.i(TAG, "onEvent: $event")
                         }
                     }
                 }
