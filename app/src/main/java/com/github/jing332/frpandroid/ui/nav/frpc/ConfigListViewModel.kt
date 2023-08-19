@@ -24,6 +24,18 @@ class ConfigListViewModel : ViewModel() {
         }
     }
 
+    fun hasRepeat(section: String, key: String): Boolean {
+        for (v in groupedItems) {
+            for (item in v.second) {
+                if (item.section == section && item.key == key) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
     fun initFromIniString(context: Context, iniStr: String) {
         loadDocument(context)
 

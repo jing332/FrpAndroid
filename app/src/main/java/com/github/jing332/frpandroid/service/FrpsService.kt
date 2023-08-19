@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import com.github.jing332.frpandroid.BuildConfig
 import com.github.jing332.frpandroid.R
+import com.github.jing332.frpandroid.constant.FrpType
 import com.github.jing332.frpandroid.data.entities.FrpLog
 import com.github.jing332.frpandroid.model.frp.Frp
 import com.github.jing332.frpandroid.model.frp.Frps
@@ -11,7 +12,7 @@ import com.github.jing332.frpandroid.service.FrpNotification.createNotification
 import com.github.jing332.frpandroid.ui.MainActivity
 
 class FrpsService() :
-    FrpService(FrpLog.Type.FRPC, ACTION_SHUTDOWN, ACTION_STATUS_CHANGED) {
+    FrpService(FrpType.FRPS, ACTION_SHUTDOWN, ACTION_STATUS_CHANGED) {
     private val mFrp by lazy {
         Frps(this)
     }

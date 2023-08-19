@@ -29,7 +29,7 @@
     <string name="more_options">更多选项</string>
     <string name="about">关于</string>
     <string name="listen_address">监听地址</string>
-    <string name="edit_config_json">编辑 config.json</string>
+    <string name="edit_config_file">编辑 %1$s</string>
     <string name="no_server_enable_warn_msg">请至少启用一个服务器！</string>
     <string name="alist_provider">AList提供者</string>
     <string name="provider_root_summary">account</string>
@@ -38,7 +38,7 @@
     <string name="frp_server">FRP服务</string>
     <string name="frps">FRPS</string>
     <string name="frpc">FRPC</string>
-    <string name="frp_error">⚠️ FRP错误，请查看日志</string>
+    <string name="frp_error">⚠️ FRP错误 (%1$d)，请查看日志</string>
     <string name="config">配置</string>
     <string name="start">启动</string>
     <string name="help_document">帮助文档</string>
@@ -47,4 +47,7 @@
     <string name="search_filter">搜索过滤</string>
     <string name="save">保存</string>
     <string name="edit_config">编辑配置</string>
+    <string name="warn">警告</string>
+    <string name="config_add_has_repeat">已存在相同的配置项，是否覆盖？</string>
+    <string name="recommended_use_mt_for_editing">推荐使用MT管理器进行编辑</string>
 </resources>

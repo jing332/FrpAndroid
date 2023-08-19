@@ -348,8 +348,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_trending_up_24" />
-                            <entry key="sourceFile" value="G:\Users\jing\AndroidStudioProjects\FrpAndroid" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="edit" />
+                            <entry key="sourceFile" value="G:\Users\jing\Downloads\edit (1).svg" />
                           </map>
                         </option>
                       </PersistentState>

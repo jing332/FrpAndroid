@@ -40,11 +40,11 @@ class App : Application() {
             XCrash.InitParameters()
                 .setLogDir(this.getExternalFilesDir("xCrash")!!.absolutePath)
                 .setAppVersion(BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")")
-                .setJavaCallback { logPath, emergency ->
+                .setJavaCallback { logPath, _ ->
                     longToast("程序崩溃：${logPath}")
                     copyLog(logPath)
                 }
-                .setNativeCallback { logPath, emergency ->
+                .setNativeCallback { logPath, _ ->
                     longToast("底层程序崩溃：${logPath}")
                     copyLog(logPath)
                 }
