@@ -1,6 +1,7 @@
 package com.github.jing332.frpandroid.ui.nav.frpc
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.IntentFilter
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -46,6 +47,8 @@ import com.github.jing332.frpandroid.model.frp.Frpc
 import com.github.jing332.frpandroid.service.FrpServiceManager.frpcSwitch
 import com.github.jing332.frpandroid.service.FrpcService
 import com.github.jing332.frpandroid.ui.LocalMainViewModel
+import com.github.jing332.frpandroid.ui.MyTools
+import com.github.jing332.frpandroid.ui.SwitchFrpActivity
 import com.github.jing332.frpandroid.ui.nav.BasicFrpScreen
 import com.github.jing332.frpandroid.ui.nav.FrpTopAppBar
 import com.github.jing332.frpandroid.ui.widgets.LocalBroadcastReceiver
@@ -87,7 +90,15 @@ fun FrpcScreen() {
                 }
             }
             FrpTopAppBar(type = stringResource(id = R.string.frpc), "Client", version = version) {
-
+                MyTools.addShortcut(
+                    ctx = context,
+                    name = "frpc",
+                    id = "frpc",
+                    iconResId = R.drawable.ic_frpc,
+                    launcherIntent = Intent(context, SwitchFrpActivity::class.java).apply {
+                        type = "frpc"
+                    }
+                )
             }
         }
     ) { paddingValues ->

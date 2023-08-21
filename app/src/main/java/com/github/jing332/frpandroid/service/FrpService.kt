@@ -1,13 +1,16 @@
 package com.github.jing332.frpandroid.service
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 import com.github.jing332.frpandroid.R
+import com.github.jing332.frpandroid.config.AppConfig
 import com.github.jing332.frpandroid.constant.AppConst
 import com.github.jing332.frpandroid.constant.FrpType
 import com.github.jing332.frpandroid.constant.LogLevel
@@ -24,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import splitties.systemservices.powerManager
 import kotlin.coroutines.coroutineContext
 import kotlin.system.measureTimeMillis
 
@@ -45,6 +49,13 @@ abstract class FrpService(
     open var isRunning: Boolean = false
 
     abstract val frp: Frp
+
+    val mWakeLock by lazy {
+        powerManager.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "frp_android:${type.name}"
+        )
+    }
 
     private fun statusChanged() {
         AppConst.localBroadcast.sendBroadcast(Intent(onStatusChangedAction))
@@ -154,8 +165,14 @@ abstract class FrpService(
     }
 
     private val mNotificationReceiver = MyReceiver()
+
+    @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
+
+        if (AppConfig.enabledWakeLock.value)
+            mWakeLock.acquire()
+
         registerGlobalReceiver(
             mNotificationReceiver,
             IntentFilter(shutdownAction),
@@ -184,6 +201,8 @@ abstract class FrpService(
 
     override fun onDestroy() {
         super.onDestroy()
+
+        mWakeLock.release()
 
         unregisterReceiver(mNotificationReceiver)
     }

@@ -71,7 +71,7 @@ internal fun PreferenceSwitch(
 }
 
 @Composable
-internal fun BasePreferenceWidget(
+fun PreferenceWidget(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     title: @Composable () -> Unit,
@@ -162,7 +162,7 @@ internal fun PreferenceDialog(
             }
         }
     }
-    BasePreferenceWidget(modifier, onClick = {
+    PreferenceWidget(modifier, onClick = {
         showDialog = true
     }, title = title, subTitle = subTitle) {
         endContent()

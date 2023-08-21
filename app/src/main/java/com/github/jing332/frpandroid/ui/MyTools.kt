@@ -7,10 +7,34 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import com.github.jing332.frpandroid.util.ToastUtils.longToast
+import splitties.systemservices.powerManager
 
 object MyTools {
+
+    @SuppressLint("BatteryLife")
+    fun Context.killBattery(): Boolean {
+        runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                    startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                        data = Uri.parse("package:$packageName")
+                    })
+                    false
+                } else {
+                    true
+                }
+            }
+        }.onFailure {
+            longToast("请求电池优化白名单失败")
+        }
+
+        return false
+    }
+
     /* 添加快捷方式 */
     @SuppressLint("UnspecifiedImmutableFlag")
     @Suppress("DEPRECATION")
