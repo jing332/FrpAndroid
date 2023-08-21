@@ -4,7 +4,7 @@ import android.content.Context
 import java.io.File
 
 class Frpc(val context: Context) :
-    Frp(context.applicationInfo.nativeLibraryDir + File.separator + "frpc.so") {
+    Frp(context.applicationInfo.nativeLibraryDir + File.separator + "libfrpc.so") {
 
 
     override fun getConfigFilePath(): String =

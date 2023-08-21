@@ -8,7 +8,7 @@ function build() {
     export GOOS=android
     export GOARCH="$2"
 
-    FN="$1.so"
+    FN="lib$1.so"
     rm -f ${FN}
     go build -ldflags "-s -w" -o ${FN}
 
