@@ -14,7 +14,7 @@ object AppConfig {
     val isFirstRun: Boolean
         get() = File(
             (app.filesDir.parentFile?.absolutePath + File.separator + "shared_prefs")
-        ).exists()
+        ).exists().not()
 
     init {
         DataSaverConverter.registerTypeConverters<FrpType>(
