@@ -45,17 +45,12 @@ abstract class FrpService(
         return null
     }
 
-    var process: Process? = null
+    private var process: Process? = null
     open var isRunning: Boolean = false
 
     abstract val frp: Frp
 
-    val mWakeLock by lazy {
-        powerManager.newWakeLock(
-            PowerManager.PARTIAL_WAKE_LOCK,
-            "frp_android:${type.name}"
-        )
-    }
+    private  var mWakeLock: PowerManager.WakeLock? = null
 
     private fun statusChanged() {
         AppConst.localBroadcast.sendBroadcast(Intent(onStatusChangedAction))
@@ -170,8 +165,13 @@ abstract class FrpService(
     override fun onCreate() {
         super.onCreate()
 
-        if (AppConfig.enabledWakeLock.value)
-            mWakeLock.acquire()
+        if (AppConfig.enabledWakeLock.value){
+            mWakeLock = powerManager.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "frp_android::${type.name}"
+            )
+            mWakeLock?.acquire()
+        }
 
         registerGlobalReceiver(
             mNotificationReceiver,
@@ -202,7 +202,8 @@ abstract class FrpService(
     override fun onDestroy() {
         super.onDestroy()
 
-        mWakeLock.release()
+        mWakeLock?.release()
+        mWakeLock = null
 
         unregisterReceiver(mNotificationReceiver)
     }

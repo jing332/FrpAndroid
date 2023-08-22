@@ -35,8 +35,6 @@ class MainActivity : BaseComposeActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            if (AppConfig.isFirstRun)
-                killBattery()
             ShortCuts.buildShortCuts(this@MainActivity)
         }
     }

@@ -6,6 +6,7 @@
 
 local.properties
 
+*.so
 *.exe
 *.tgz
 *.zip
