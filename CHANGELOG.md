@@ -1,1 +1,1 @@
-release
+[同步FRP] 
